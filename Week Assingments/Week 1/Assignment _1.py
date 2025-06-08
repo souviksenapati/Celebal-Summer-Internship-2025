@@ -22,6 +22,6 @@ def pyramid(n):
 ##User Input
 rows = int(input("Enter the number of rows: "))
 
-lower_triangular(rows)
-upper_triangular(rows)
+low_tri(rows)
+up_tri(rows)
 pyramid(rows)
