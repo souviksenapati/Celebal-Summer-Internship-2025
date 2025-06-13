@@ -1,12 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Prediction Result</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Student Score Prediction Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            text-align: center;
+            padding: 50px;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 60%;
+            background: #fff;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Predicted Student Score: {{ score }}</h1>
-    <h2>Status: {{ risk }}</h2>
-    <a href="/">Go Back</a>
+    <h2>Predicted Student Score: {{ prediction }}</h2>
+    <h3>Status: {{ status }}</h3>
+
+    <h3>Key Factors Influencing Prediction:</h3>
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>SHAP Impact</th>
+        </tr>
+        {% for feature, impact in explanation %}
+        <tr>
+            <td>{{ feature }}</td>
+            <td>{{ '%.2f'|format(impact) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p><a href="/">Go Back</a></p>
 </body>
 </html>

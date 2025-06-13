@@ -1,56 +1,82 @@
-import pandas as pd
+# ============================
+# Imports
+# ============================
+import pickle
 import numpy as np
-import joblib
+from flask import Flask, render_template, request
 import shap
 
-from flask import Flask, render_template, request
-
+# ============================
+# Flask App Initialization
+# ============================
 app = Flask(__name__)
 
-# Load model
-model = joblib.load('model/student_score_lgbm_model.pkl')
+# ============================
+# Load Trained Model
+# ============================
+model = pickle.load(open("model/student_score_lgbm_model.pkl", "rb"))
 
-# For SHAP explanations
+# Initialize SHAP explainer
 explainer = shap.TreeExplainer(model)
 
-# Homepage
-@app.route('/')
-def home():
-    return render_template('index.html')
+# ============================
+# Routes
+# ============================
 
-# Prediction endpoint
-@app.route('/predict', methods=['POST'])
+# Home route (form)
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+# Prediction route
+@app.route("/predict", methods=["POST"])
 def predict():
-    data = request.form
-    # Get form values
-    Gender = int(data['Gender'])
-    Hours_Studied = float(data['Hours_Studied'])
-    Previous_Score = float(data['Previous_Score'])
-    Attendance = float(data['Attendance'])
-    Internet = int(data['Internet'])
-    Extra = float(data['Extra'])
-    Sleep = float(data['Sleep'])
-    Health = int(data['Health'])
+    try:
+        # Collect data from form
+        data = [
+            float(request.form["gender"]),
+            float(request.form["hours_studied"]),
+            float(request.form["previous_exam_score"]),
+            float(request.form["attendance"]),
+            float(request.form["internet_access"]),
+            float(request.form["extra_curricular_hours"]),
+            float(request.form["sleep_hours"]),
+            float(request.form["health_issues"]),
+        ]
 
-    # Prepare data for model
-    features = np.array([[Gender, Hours_Studied, Previous_Score, Attendance, Internet, Extra, Sleep, Health]])
-    score_pred = model.predict(features)[0]
+        # Predict score
+        prediction = model.predict([data])[0]
 
-    # SHAP explanation
-    shap_values = explainer.shap_values(pd.DataFrame(features, columns=[
-        'Gender','Hours_Studied','Previous_Exam_Score','Attendance','Internet_Access','Extra_Curricular_Hours','Sleep_Hours','Health_Issues'
-    ]))
+        # Convert to proper shape for SHAP
+        input_array = np.array([data])
 
-    # Risk Flagging
-    risk = "Needs Support" if score_pred < 60 else "Good Performance"
+        # SHAP explanation
+        shap_values = explainer.shap_values(input_array)
+        feature_names = ['Gender', 'Hours Studied', 'Previous Exam Score', 'Attendance', 
+                        'Internet Access', 'Extra Curricular Hours', 'Sleep Hours', 'Health Issues']
 
-    return render_template("result.html", score=round(score_pred,2), risk=risk, shap_values=shap_values[0])
+        explanation = list(zip(feature_names, shap_values[0]))
+        explanation_sorted = sorted(explanation, key=lambda x: abs(x[1]), reverse=True)
 
-# Educator Dashboard — Show top features
-@app.route('/risk')
-def risk_students():
-    # Future: show risk list — right now just template placeholder
-    return render_template("risk.html")
 
+        # Simple risk categorization
+        if prediction >= 85:
+            status = "Excellent"
+        elif prediction >= 60:
+            status = "Good Performance"
+        else:
+            status = "Needs Attention"
+
+        return render_template("result.html", 
+                                prediction=round(prediction, 2), 
+                                status=status, 
+                                explanation=explanation_sorted)
+    
+    except Exception as e:
+        return str(e)
+
+# ============================
+# Main launcher
+# ============================
 if __name__ == "__main__":
     app.run(debug=True)
