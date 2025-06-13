@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Educator Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Student Score Predictor</h1>
+    <form action="/predict" method="post">
+        <label>Gender (Male=1, Female=0):</label><input type="text" name="Gender"><br>
+        <label>Hours Studied:</label><input type="text" name="Hours_Studied"><br>
+        <label>Previous Exam Score:</label><input type="text" name="Previous_Score"><br>
+        <label>Attendance (%):</label><input type="text" name="Attendance"><br>
+        <label>Internet Access (Yes=1, No=0):</label><input type="text" name="Internet"><br>
+        <label>Extra Curricular Hours:</label><input type="text" name="Extra"><br>
+        <label>Sleep Hours:</label><input type="text" name="Sleep"><br>
+        <label>Health Issues (Yes=1, No=0):</label><input type="text" name="Health"><br>
+        <input type="submit" value="Predict">
+    </form>
+</body>
+</html>
