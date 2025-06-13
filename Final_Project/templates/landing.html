@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Performance Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { font-family: 'Montserrat', sans-serif; color: #222; background: #f5f8fd; }
+
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(10px);
+            padding: 18px 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 999; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+        }
+        nav .logo {
+            font-size: 26px; font-weight: 800; color: #1A2980;
+        }
+        nav a {
+            color: #1A2980; text-decoration: none; margin-left: 35px;
+            font-weight: 600; font-size: 16px;
+            position: relative; transition: 0.4s;
+        }
+        nav a::after {
+            content: ""; position: absolute; left: 0; bottom: -5px;
+            width: 0%; height: 2px; background: #26D0CE;
+            transition: width 0.4s ease;
+        }
+        nav a:hover::after { width: 100%; }
+
+        header {
+            background: linear-gradient(135deg, #1A2980, #26D0CE);
+            color: #fff; text-align: center;
+            padding: 170px 20px 110px 20px;
+            clip-path: polygon(0 0, 100% 0, 100% 87%, 0 100%);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-top: 80px;
+        }
+        header h1 {
+            font-size: 58px; margin-bottom: 20px;
+            background: linear-gradient(to right, #ffffff, #cce0ff);
+            -webkit-background-clip: text; color: transparent;
+        }
+        header p { font-size: 22px; margin-bottom: 35px; }
+        .cta-btn {
+            background: #fff; color: #1A2980;
+            padding: 18px 50px; border-radius: 50px;
+            text-decoration: none; font-weight: 700; font-size: 20px;
+            transition: all 0.3s; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .cta-btn:hover { background: #26D0CE; color: #fff; transform: scale(1.05); }
+
+        img.hero-img {
+            width: 500px; max-width: 90%;
+            border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            margin-top: 40px;
+        }
+
+        section {
+            max-width: 1200px; margin: 80px auto; padding: 50px 20px;
+            text-align: center;
+        }
+        section h2 {
+            font-size: 46px; color: #1A2980; margin-bottom: 30px;
+            position: relative; font-weight: 800;
+        }
+        section h2::after {
+            content: ''; width: 60px; height: 5px;
+            background: #26D0CE; position: absolute;
+            left: 50%; transform: translateX(-50%);
+            bottom: -15px; border-radius: 3px;
+        }
+
+        /* ABOUT SECTION */
+        #about-content {
+            max-width: 1000px; 
+            margin: 40px auto; 
+            padding: 50px 40px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ffffff, #f3f9ff);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .about-icon {
+            flex: 1 1 200px;
+            background: linear-gradient(135deg, #1A2980, #26D0CE);
+            border-radius: 50%;
+            width: 160px; height: 160px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 60px; color: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .about-text {
+            flex: 3 1 400px;
+            text-align: left;
+        }
+        .about-text h3 {
+            font-size: 30px; color: #1A2980; margin-bottom: 20px;
+        }
+        .about-text p {
+            font-size: 18px; line-height: 1.8; color: #333;
+        }
+
+        .features {
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 40px;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+            padding: 50px 40px; border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            flex: 1 1 320px; transition: all 0.4s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 35px 60px rgba(0,0,0,0.2);
+        }
+        .feature-icon {
+            background: linear-gradient(135deg, #1A2980, #26D0CE);
+            color: #fff; font-size: 40px; width: 80px; height: 80px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 30px auto; box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .feature-card h3 {
+            font-size: 24px; margin-bottom: 18px;
+            background: linear-gradient(to right, #1A2980, #26D0CE);
+            -webkit-background-clip: text; color: transparent;
+        }
+        .feature-card p { font-size: 17px; line-height: 1.6; }
+
+        footer {
+            background: #1A2980; color: #fff;
+            padding: 35px; font-size: 16px; margin-top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">📊 Student Analyzer</div>
+    <div>
+        <a href="#about">About</a>
+        <a href="#features">Features</a>
+        <a href="/predictor">Predict</a>
+    </div>
+</nav>
+
+<header id="home">
+    <h1>AI Student Performance Predictor</h1>
+    <p>Leverage ML-powered insights to boost student outcomes. Transparent & Actionable.</p>
+    <a href="/predictor" class="cta-btn">🚀 Start Prediction</a>
+    <img src="https://i.imgur.com/90M8Vzh.png" alt="Student Performance" class="hero-img">
+</header>
+
+<section id="about">
+    <h2>About the Project</h2>
+    <div id="about-content">
+        <div class="about-icon">🧑‍💻</div>
+        <div class="about-text">
+            <h3>Celebal Summer Internship 2025</h3>
+            <p>
+                Built by <b>Souvik Senapati</b> as part of advanced R&D training. This platform leverages cutting-edge Machine Learning models like <b>LightGBM</b> combined with explainable AI techniques such as <b>SHAP</b> to provide meaningful insights into student academic performance.
+            </p>
+            <p style="margin-top: 15px;">
+                The goal: empower educators with predictive, actionable intelligence, enabling early interventions that help students thrive.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="features">
+    <h2>Key Features</h2>
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Precision Predictions</h3>
+            <p>Accurately forecast student scores using behavioral, academic & attendance data with LightGBM models.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h3>Explainable AI</h3>
+            <p>SHAP-based explainability ensures complete transparency behind every AI-generated prediction.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Actionable Interventions</h3>
+            <p>Highlights negative feature influences so educators can take focused, effective academic action plans.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    © 2025 Celebal Internship Project | Built by Souvik Senapati
+</footer>
+
+</body>
+</html>

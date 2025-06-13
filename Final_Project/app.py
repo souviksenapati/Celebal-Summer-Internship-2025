@@ -23,43 +23,55 @@ explainer = shap.TreeExplainer(model)
 # Routes
 # ============================
 
-# Home route (form)
+# Landing Page Route
 @app.route("/")
+def landing():
+    return render_template("landing.html")
+
+# Prediction Form Route
+@app.route("/predictor")
 def index():
     return render_template("index.html")
 
-# Prediction route
+# Prediction Processing Route
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        # Collect data from form
+        # Collect & validate data from form
         data = [
-            float(request.form["gender"]),
-            float(request.form["hours_studied"]),
-            float(request.form["previous_exam_score"]),
-            float(request.form["attendance"]),
-            float(request.form["internet_access"]),
-            float(request.form["extra_curricular_hours"]),
-            float(request.form["sleep_hours"]),
-            float(request.form["health_issues"]),
+            float(request.form["Gender"]),
+            float(request.form["Hours_Studied"]),
+            float(request.form["Previous_Score"]),
+            float(request.form["Attendance"]),
+            float(request.form["Internet"]),
+            float(request.form["Extra"]),
+            float(request.form["Sleep"]),
+            float(request.form["Health"]),
         ]
 
-        # Predict score
-        prediction = model.predict([data])[0]
+        # Convert to 2D array for model input
+        data_array = np.array([data])
 
-        # Convert to proper shape for SHAP
-        input_array = np.array([data])
+        # Make prediction
+        prediction = model.predict(data_array)[0]
 
         # SHAP explanation
-        shap_values = explainer.shap_values(input_array)
-        feature_names = ['Gender', 'Hours Studied', 'Previous Exam Score', 'Attendance', 
-                        'Internet Access', 'Extra Curricular Hours', 'Sleep Hours', 'Health Issues']
+        shap_values = explainer.shap_values(data_array)
+        feature_names = [
+            'Gender', 'Hours Studied', 'Previous Exam Score', 'Attendance', 
+            'Internet Access', 'Extra Curricular Hours', 'Sleep Hours', 'Health Issues'
+        ]
 
         explanation = list(zip(feature_names, shap_values[0]))
         explanation_sorted = sorted(explanation, key=lambda x: abs(x[1]), reverse=True)
 
+        # Suggested actionable feedback for educator
+        negative_impacts = [f for f in explanation if f[1] < 0]
+        negative_impacts_sorted = sorted(negative_impacts, key=lambda x: x[1])
+        top_issues = [f[0] for f in negative_impacts_sorted[:2]]
+        suggested_action = ", ".join(top_issues) if top_issues else "No major concerns"
 
-        # Simple risk categorization
+        # Risk categorization
         if prediction >= 85:
             status = "Excellent"
         elif prediction >= 60:
@@ -67,11 +79,14 @@ def predict():
         else:
             status = "Needs Attention"
 
-        return render_template("result.html", 
-                                prediction=round(prediction, 2), 
-                                status=status, 
-                                explanation=explanation_sorted)
-    
+        return render_template(
+            "result.html", 
+            prediction=round(prediction, 2), 
+            status=status, 
+            explanation=explanation_sorted,
+            suggestion=suggested_action
+        )
+
     except Exception as e:
         return str(e)
 
