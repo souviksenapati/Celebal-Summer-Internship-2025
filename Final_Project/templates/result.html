@@ -13,36 +13,37 @@
         }
         .container {
             background: #ffffff;
-            max-width: 800px;
+            max-width: 850px;
             margin: 60px auto;
             padding: 40px 50px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s;
-        }
-        .container:hover {
-            transform: translateY(-5px);
         }
         h1 {
             text-align: center;
             color: #2c3e50;
             font-size: 32px;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
         }
         .score-box {
             text-align: center;
-            font-size: 22px;
+            font-size: 26px;
             margin-bottom: 20px;
             color: #34495e;
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #26a69a;
         }
         .status-box {
-            background: #e0f8f1;
+            background: linear-gradient(90deg, #26a69a, #2ecc71);
+            color: white;
             padding: 15px 20px;
-            border-left: 6px solid #26a69a;
-            border-radius: 10px;
+            border-radius: 12px;
             margin: 20px 0;
-            font-size: 18px;
-            color: #2c3e50;
+            font-size: 20px;
+            text-align: center;
+            font-weight: bold;
         }
         h3 {
             margin-top: 30px;
@@ -51,33 +52,30 @@
             border-bottom: 2px solid #eee;
             padding-bottom: 5px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .feature-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .badge {
+            padding: 15px 25px;
+            background: linear-gradient(90deg, #74ebd5, #acb6e5);
+            border-radius: 50px;
             font-size: 16px;
+            color: #333;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
         }
-        th, td {
-            padding: 15px 20px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background: linear-gradient(90deg, #26a69a, #2ecc71);
-            color: white;
-            font-size: 16px;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
+        .badge:hover {
+            transform: scale(1.05);
         }
         .suggestion-box {
             background: #fff3cd;
             padding: 20px;
             border-left: 6px solid #ffc107;
-            margin-top: 30px;
+            margin-top: 40px;
             border-radius: 10px;
             font-size: 17px;
             color: #856404;
@@ -113,7 +111,7 @@
     <h1>Student Performance Insights</h1>
 
     <div class="score-box">
-        Predicted Student Score: <b>{{ prediction }}</b>
+        🎯 Predicted Student Score: <b>{{ prediction }}</b>
     </div>
 
     <div class="status-box">
@@ -121,18 +119,12 @@
     </div>
 
     <h3>Key Factors Influencing Prediction:</h3>
-    <table>
-        <tr>
-            <th>Feature</th>
-            <th>SHAP Impact</th>
-        </tr>
+
+    <div class="feature-badges">
         {% for feature, impact in explanation %}
-        <tr>
-            <td>{{ feature }}</td>
-            <td>{{ '%.2f' % impact }}</td>
-        </tr>
+        <div class="badge">{{ feature }}: {{ '%.2f' % impact }}</div>
         {% endfor %}
-    </table>
+    </div>
 
     <div class="suggestion-box">
         <b>Suggested Action:</b><br> Provide additional support in: {{ suggestion }}

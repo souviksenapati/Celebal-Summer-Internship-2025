@@ -26,12 +26,12 @@ explainer = shap.TreeExplainer(model)
 # Landing Page Route
 @app.route("/")
 def landing():
-    return render_template("landing.html")
+    return render_template("index.html")
 
 # Prediction Form Route
 @app.route("/predictor")
 def index():
-    return render_template("index.html")
+    return render_template("predictor.html")
 
 # Prediction Processing Route
 @app.route("/predict", methods=["POST"])
@@ -43,7 +43,6 @@ def predict():
             float(request.form["Hours_Studied"]),
             float(request.form["Previous_Score"]),
             float(request.form["Attendance"]),
-            float(request.form["Internet"]),
             float(request.form["Extra"]),
             float(request.form["Sleep"]),
             float(request.form["Health"]),
@@ -58,8 +57,8 @@ def predict():
         # SHAP explanation
         shap_values = explainer.shap_values(data_array)
         feature_names = [
-            'Gender', 'Hours Studied', 'Previous Exam Score', 'Attendance', 
-            'Internet Access', 'Extra Curricular Hours', 'Sleep Hours', 'Health Issues'
+            'Gender', 'Hours Studied', 'Previous Exam Score', 'Attendance',
+            'Extra Curricular Hours', 'Sleep Hours', 'Health Issues'
         ]
 
         explanation = list(zip(feature_names, shap_values[0]))
