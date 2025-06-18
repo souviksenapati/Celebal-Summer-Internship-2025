@@ -80,6 +80,15 @@
             font-size: 17px;
             color: #856404;
         }
+        .feedback-line {
+            background: #eafaf1;
+            padding: 15px;
+            border-left: 5px solid #2ecc71;
+            margin-top: 30px;
+            border-radius: 10px;
+            color: #2e7d32;
+            font-size: 17px;
+        }
         .button-container {
             text-align: center;
             margin-top: 35px;
@@ -126,8 +135,17 @@
         {% endfor %}
     </div>
 
+    <div class="feedback-line">
+        🧠 <b>Feedback:</b> Your score is influenced by: <b>{{ feedback }}</b>
+    </div>
+
     <div class="suggestion-box">
-        <b>Suggested Action:</b><br> Provide additional support in: {{ suggestion }}
+        <b>🎯 Suggestions:</b>
+        <ul>
+            {% for s in suggestions %}
+            <li>{{ s }}</li>
+            {% endfor %}
+        </ul>
     </div>
 
     <div class="button-container">

@@ -100,6 +100,15 @@
             font-size: 13px;
         }
 
+        #hour-status {
+            display: none;
+            color: yellow;
+            font-size: 14px;
+            text-align: center;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+
         @media(max-width: 768px) {
             .form-group {
                 width: 100%;
@@ -157,11 +166,43 @@
             </div>
         </div>
 
+        <p id="hour-status">⚠️ Total time exceeds 24 hours! Please adjust.</p>
         <button class="submit-btn" type="submit">🚀 Predict Score</button>
     </form>
 
     <footer>© 2025 Celebal Internship Project | Student Performance Predictor</footer>
 </div>
+
+<script>
+    const studyInput = document.querySelector('input[name="Hours_Studied"]');
+    const extraInput = document.querySelector('input[name="Extra"]');
+    const sleepInput = document.querySelector('input[name="Sleep"]');
+    const hourStatus = document.getElementById('hour-status');
+
+    const updateHourLimits = () => {
+        const study = parseFloat(studyInput.value) || 0;
+        const extra = parseFloat(extraInput.value) || 0;
+        const sleep = parseFloat(sleepInput.value) || 0;
+
+        const total = study + extra + sleep;
+
+        // Dynamically update max limits to avoid invalid entries
+        studyInput.max = (24 - extra - sleep).toFixed(1);
+        extraInput.max = (24 - study - sleep).toFixed(1);
+        sleepInput.max = (24 - study - extra).toFixed(1);
+
+        // Show warning only if total exceeds 24
+        if (total > 24) {
+            hourStatus.style.display = 'block';
+        } else {
+            hourStatus.style.display = 'none';
+        }
+    };
+
+    [studyInput, extraInput, sleepInput].forEach(input =>
+        input.addEventListener('input', updateHourLimits)
+    );
+</script>
 
 </body>
 </html>
