@@ -135,9 +135,11 @@
         {% endfor %}
     </div>
 
+    {% if feedback %}
     <div class="feedback-line">
         🧠 <b>Feedback:</b> Your score is influenced by: <b>{{ feedback }}</b>
     </div>
+    {% endif %}
 
     <div class="suggestion-box">
         <b>🎯 Suggestions:</b>

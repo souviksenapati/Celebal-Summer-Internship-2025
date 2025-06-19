@@ -13,31 +13,42 @@ import shap
 app = Flask(__name__)
 
 # ============================
-# Load Trained Model
+# Load Trained Model & SHAP
 # ============================
 model = pickle.load(open("model/student_score_lgbm_model.pkl", "rb"))
 explainer = shap.TreeExplainer(model)
 
 # ============================
+# Utility: Dynamic SHAP Threshold
+# ============================
+def find_shap_threshold(feature_name, user_data, scan_range):
+    for val in scan_range:
+        test_data = user_data.copy()
+        test_data[feature_name] = val
+        shap_vals = explainer.shap_values(test_data)
+        shap_vals = shap_vals[0] if isinstance(shap_vals, list) else shap_vals
+        feat_index = list(user_data.columns).index(feature_name)
+        if shap_vals[0][feat_index] >= 0:
+            return val
+    return max(scan_range)
+
+# ============================
 # Routes
 # ============================
 
-# Landing Page
 @app.route("/")
 def landing():
     return render_template("index.html")
 
-# Form Page
 @app.route("/predictor")
 def index():
     return render_template("predictor.html")
 
-# Prediction Logic
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        # Collect & validate data from form
-        data = [
+        # Step 1: Input & Preprocessing
+        input_data = [
             float(request.form["Gender"]),
             float(request.form["Hours_Studied"]),
             float(request.form["Previous_Score"]),
@@ -51,24 +62,21 @@ def predict():
             'Gender', 'Hours Studied', 'Previous Exam Score', 'Attendance',
             'Extra Curricular Hours', 'Sleep Hours', 'Health Issues'
         ]
+        input_df = pd.DataFrame([input_data], columns=feature_names)
+        data = dict(zip(feature_names, input_data))
 
-        data_array = np.array([data])
-        df = pd.DataFrame(data_array, columns=feature_names)
+        # Step 2: Prediction
+        prediction = model.predict(input_df)[0]
+        prediction = min(100, max(0, prediction))  # Clamp to 0–100
 
-        # Make prediction
-        prediction = model.predict(df)[0]
+        # Step 3: SHAP Explanation
+        shap_values = explainer.shap_values(input_df)
+        shap_vals = shap_values[0] if isinstance(shap_values, list) else shap_values
+        shap_array = shap_vals[0]
+        explanation_sorted = list(zip(feature_names, shap_array))
+        explanation_sorted.sort(key=lambda x: abs(x[1]), reverse=True)
 
-        # Get SHAP values
-        shap_values = explainer.shap_values(df)
-        shap_val_row = shap_values[0] if len(shap_values.shape) == 2 else shap_values
-        explanation = list(zip(feature_names, shap_val_row))
-        explanation_sorted = sorted(explanation, key=lambda x: abs(x[1]), reverse=True)
-
-        # Top 2 negative contributors
-        negative_impacts = [f for f in explanation_sorted if f[1] < 0]
-        top_issues = [f[0] for f in negative_impacts[:2]]
-
-        # Status tag
+        # Step 4: Status Tag
         if prediction >= 90:
             status = "Outstanding"
         elif prediction >= 80:
@@ -84,50 +92,77 @@ def predict():
         else:
             status = "Needs Serious Attention"
 
-        # Suggestions (based on top_issues only)
+        # Step 5: Feedback & Top 2 Negative SHAP Features
+        negative_impact_features = [feat for feat, val in explanation_sorted if val < 0][:2]
+        feedback = ", ".join(negative_impact_features) if negative_impact_features else "No major concerns"
+
+        # Step 6: SHAP-Neutral Thresholds & Smart Suggestions
         raw_suggestions = []
+        if prediction < 90:
+            scan_ranges = {
+                "Sleep Hours": np.arange(3, 11.1, 0.5),
+                "Hours Studied": np.arange(1, 12.1, 0.5),
+                "Extra Curricular Hours": np.arange(0, 8.1, 0.5),
+                "Attendance": np.arange(40, 100.1, 1),
+            }
 
-        if "Sleep Hours" in top_issues:
-            sleep = data[5]
-            if sleep > 8:
-                raw_suggestions.append(f"reduce sleep by {round(sleep - 8, 1)} hr")
-            elif sleep < 5:
-                raw_suggestions.append(f"increase sleep by {round(6 - sleep, 1)} hr")
+            used_hours = data["Sleep Hours"] + data["Hours Studied"] + data["Extra Curricular Hours"]
+            remaining_hours = max(0, 24 - used_hours)
 
-        if "Hours Studied" in top_issues:
-            studied = data[1]
-            if studied < 4:
-                raw_suggestions.append(f"increase study time by {round(3 - studied, 1)} hr")
-            elif studied > 10:
-                raw_suggestions.append(f"reduce study time by {round(studied - 8, 1)} hr to avoid burnout")
+            for feat in negative_impact_features:
+                val = data[feat]
+                shap_val = shap_array[feature_names.index(feat)]
 
-        if "Extra Curricular Hours" in top_issues:
-            extra = data[4]
-            if extra > 4:
-                raw_suggestions.append(f"reduce extra-curricular activities by {round(extra - 5, 1)} hr")
+                if feat in scan_ranges:
+                    threshold = find_shap_threshold(feat, input_df, scan_ranges[feat])
+                    delta = round(abs(val - threshold), 1)
 
-        if "Attendance" in top_issues:
-            attendance = data[3]
-            if attendance < 75:
-                raw_suggestions.append(f"improve attendance by at least {round(75 - attendance, 1)}%")
+                    if delta >= 0.0001 or shap_val < -1.0:
+                        suggest_delta = round(max(delta, 0.5), 1)
 
-        if "Previous Exam Score" in top_issues:
-            prev = data[2]
-            if prev < 50:
-                raw_suggestions.append("focus on basic concepts to improve your score")
+                        # Prevent overflow beyond 24 hours
+                        if feat in ["Sleep Hours", "Hours Studied", "Extra Curricular Hours"] and val < threshold:
+                            suggest_delta = min(suggest_delta, remaining_hours)
+                            if suggest_delta <= 0:
+                                continue  # skip if no available time
 
-        if "Health Issues" in top_issues:
-            health = data[6]
-            if health == 1:
-                raw_suggestions.append("focus on your health and manage study load accordingly")
+                        if feat == "Sleep Hours":
+                            if val > threshold:
+                                raw_suggestions.append(f"reduce sleep by {suggest_delta} hr{'s' if suggest_delta != 1 else ''}")
+                            elif val < threshold:
+                                raw_suggestions.append(f"increase sleep by {suggest_delta} hr{'s' if suggest_delta != 1 else ''}")
 
-        # Final suggestion formatting
+                        elif feat == "Hours Studied":
+                            if val > threshold:
+                                raw_suggestions.append(f"reduce study time by {suggest_delta} hr{'s' if suggest_delta != 1 else ''} to avoid burnout")
+                            elif val < threshold:
+                                raw_suggestions.append(f"increase study time by {suggest_delta} hr{'s' if suggest_delta != 1 else ''}")
+
+                        elif feat == "Extra Curricular Hours":
+                            if val > threshold:
+                                raw_suggestions.append(f"reduce extra-curricular hours by {suggest_delta} hr{'s' if suggest_delta != 1 else ''}")
+                            elif val < threshold:
+                                raw_suggestions.append(f"increase extra-curricular hours by {suggest_delta} hr{'s' if suggest_delta != 1 else ''}")
+
+                        elif feat == "Attendance":
+                            if val < threshold:
+                                raw_suggestions.append(f"improve attendance by at least {suggest_delta}%")
+                            elif val > threshold:
+                                raw_suggestions.append(f"maintain attendance below {threshold}% to balance schedule")
+
+                elif feat == "Previous Exam Score" and val < 50:
+                    raw_suggestions.append("focus on basic concepts to improve your score")
+
+                elif feat == "Health Issues" and val == 1:
+                    raw_suggestions.append("focus on your health and manage study load accordingly")
+
+        # Step 7: Format Suggestions
         if raw_suggestions:
             if len(raw_suggestions) == 1:
-                sentence = raw_suggestions[0]
+                suggestions = [raw_suggestions[0].capitalize() + "."]
             else:
-                sentence = ", ".join(raw_suggestions[:-1]) + " and " + raw_suggestions[-1]
-            suggestions = [sentence[0].upper() + sentence[1:] + "."]
+                final_suggestion = ", ".join(raw_suggestions[:-1]) + " and " + raw_suggestions[-1] + "."
+                suggestions = [final_suggestion.capitalize()]
         else:
             suggestions = ["You're doing great! Keep maintaining your current routine."]
 
@@ -136,7 +171,7 @@ def predict():
             prediction=round(prediction, 2),
             status=status,
             explanation=explanation_sorted,
-            feedback=", ".join(top_issues) if top_issues else "No major concerns",
+            feedback=feedback,
             suggestions=suggestions
         )
 
@@ -144,7 +179,7 @@ def predict():
         return str(e)
 
 # ============================
-# Launch App
+# Run App
 # ============================
 if __name__ == "__main__":
     app.run(debug=True)
