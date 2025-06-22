@@ -106,6 +106,7 @@ def predict():
                 "Attendance": np.arange(40, 100.1, 1),
             }
 
+            # Track remaining time budget (max 24 hrs total)
             used_hours = data["Sleep Hours"] + data["Hours Studied"] + data["Extra Curricular Hours"]
             remaining_hours = max(0, 24 - used_hours)
 
@@ -120,11 +121,12 @@ def predict():
                     if delta >= 0.0001 or shap_val < -1.0:
                         suggest_delta = round(max(delta, 0.5), 1)
 
-                        # Prevent overflow beyond 24 hours
+                        # Avoid overflow > 24 hrs (when increasing time-based features)
                         if feat in ["Sleep Hours", "Hours Studied", "Extra Curricular Hours"] and val < threshold:
                             suggest_delta = min(suggest_delta, remaining_hours)
                             if suggest_delta <= 0:
-                                continue  # skip if no available time
+                                continue  # skip if no time left
+                            remaining_hours -= suggest_delta
 
                         if feat == "Sleep Hours":
                             if val > threshold:
