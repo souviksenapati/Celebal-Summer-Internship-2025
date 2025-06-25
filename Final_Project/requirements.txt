@@ -1,8 +1,0 @@
-Flask
-lightgbm
-xgboost==2.0.3
-pandas
-scikit-learn
-shap
-matplotlib
-joblib
