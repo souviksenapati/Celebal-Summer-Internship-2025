@@ -121,6 +121,16 @@
 <div class="container">
     <h1>🎯 Student Score Predictor</h1>
     <form action="/predict" method="post">
+
+        <!-- 🔀 Model Selection -->
+        <div class="form-group" style="margin-bottom: 30px;">
+            <label>Select Model:</label>
+            <select name="model_choice" required>
+                <option value="lgbm">LightGBM</option>
+                <option value="xgb">XGBoost</option>
+            </select>
+        </div>
+
         <div class="form-row">
             <div class="form-group">
                 <label>Gender:</label>
