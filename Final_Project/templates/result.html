@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Performance Insights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #d0f0fd, #e0ffe0);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background: #ffffff;
+            max-width: 850px;
+            margin: 60px auto;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        .score-box {
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: #34495e;
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #26a69a;
+        }
+        .status-box {
+            background: linear-gradient(90deg, #26a69a, #2ecc71);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        h3 {
+            margin-top: 30px;
+            color: #333;
+            font-size: 22px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        .feature-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .badge {
+            padding: 15px 25px;
+            background: linear-gradient(90deg, #74ebd5, #acb6e5);
+            border-radius: 50px;
+            font-size: 16px;
+            color: #333;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        .badge:hover {
+            transform: scale(1.05);
+        }
+        .suggestion-box {
+            background: #fff3cd;
+            padding: 20px;
+            border-left: 6px solid #ffc107;
+            margin-top: 40px;
+            border-radius: 10px;
+            font-size: 17px;
+            color: #856404;
+        }
+        .feedback-line {
+            background: #eafaf1;
+            padding: 15px;
+            border-left: 5px solid #2ecc71;
+            margin-top: 30px;
+            border-radius: 10px;
+            color: #2e7d32;
+            font-size: 17px;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 35px;
+        }
+        .button-container a {
+            text-decoration: none;
+            background: #26a69a;
+            color: white;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-size: 18px;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .button-container a:hover {
+            background: #138d75;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Student Performance Insights</h1>
+
+    <div class="score-box">
+        🎯 Predicted Student Score: <b>{{ prediction }}</b>
+    </div>
+
+    <div class="status-box">
+        Status: {{ status }}
+    </div>
+
+    <h3>Key Factors Influencing Prediction:</h3>
+
+    <div class="feature-badges">
+        {% for feature, impact in explanation %}
+        <div class="badge">{{ feature }}: {{ '%.2f' % impact }}</div>
+        {% endfor %}
+    </div>
+
+    {% if feedback %}
+    <div class="feedback-line">
+        🧠 <b>Feedback:</b> Your score is influenced by: <b>{{ feedback }}</b>
+    </div>
+    {% endif %}
+
+    <div class="suggestion-box">
+        <b>🎯 Suggestions:</b>
+        <ul>
+            {% for s in suggestions %}
+            <li>{{ s }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="button-container">
+        <a href="/">🔙 Go Back</a>
+    </div>
+</div>
+
+<footer>© 2025 Celebal Internship Project | Student Performance Predictor</footer>
+
+</body>
+</html>
