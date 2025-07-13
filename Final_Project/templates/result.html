@@ -5,6 +5,11 @@
     <title>Student Performance Insights</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/result.css" />
+    <style>
+        .container h1 { font-size: 32px !important; font-weight: 600 !important; margin-bottom: 30px !important; }
+        .container h3 { font-size: 22px !important; font-weight: 600 !important; margin-top: 30px !important; padding-bottom: 5px !important; }
+        .container { padding: 40px 50px !important; }
+    </style>
 </head>
 <body>
 
@@ -44,10 +49,53 @@
 
     <div class="button-container">
         <a href="/">🔙 Go Back</a>
+        <a href="#" onclick="downloadPDF(); return false;">📄 Download PDF</a>
     </div>
 </div>
 
 <footer>© 2025 Celebal Internship Project | Student Performance Predictor</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+function downloadPDF() {
+    const container = document.querySelector('.container');
+    const buttons = container.querySelector('.button-container');
+    buttons.style.display = 'none';
+    
+    html2canvas(container, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+    }).then(canvas => {
+        const { jsPDF } = window.jspdf;
+        const containerWidth = (container.offsetWidth * 0.264583) - 20;
+        const containerHeight = container.offsetHeight * 0.264583;
+        
+        const pdf = new jsPDF('p', 'mm', [containerWidth, containerHeight]);
+        const imgData = canvas.toDataURL('image/png');
+        
+        let imgWidth = containerWidth - 4 - 5.3;
+        let imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        if (imgHeight > containerHeight - 4) {
+            imgHeight = containerHeight - 4;
+            imgWidth = (canvas.width * imgHeight) / canvas.height;
+        }
+        
+        const xPos = (containerWidth - imgWidth) / 2 - 2.6 + 2.6; // Add 10px (2.6mm) left margin
+        const yPos = 10;
+        
+        pdf.addImage(imgData, 'PNG', xPos, yPos, imgWidth, imgHeight);
+        
+        const pdfBlob = pdf.output('blob');
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        window.open(pdfUrl, '_blank');
+        
+        buttons.style.display = 'block';
+    });
+}
+</script>
 
 </body>
 </html>
