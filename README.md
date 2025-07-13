@@ -87,9 +87,8 @@ python app.py
 
 | Input Form | Prediction Result |
 |------------|-------------------|
-| ![Form](screenshots/form.png) | ![Result](screenshots/result.png) |
+| ![Form](screenshot/form.png) | ![Result](screenshot/result.png) |
 
-> 📷 Add your screenshots in the `/screenshots` folder.
 
 ---
 
