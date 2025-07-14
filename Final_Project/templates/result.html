@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Student Performance Insights</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/result.css" />
     <style>
         .container h1 { font-size: 32px !important; font-weight: 600 !important; margin-bottom: 30px !important; }
@@ -12,6 +12,17 @@
     </style>
 </head>
 <body>
+
+<nav>
+    <div class="logo">📊 Student Analyzer</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/#about">About</a>
+        <a href="/#features">Features</a>
+        <a href="/#contact">Contact</a>
+        <a href="/predictor">Predict</a>
+    </div>
+</nav>
 
 <div class="container">
     <h1>Student Performance Insights</h1>
@@ -62,36 +73,37 @@ function downloadPDF() {
     const container = document.querySelector('.container');
     const buttons = container.querySelector('.button-container');
     buttons.style.display = 'none';
-    
+
     html2canvas(container, {
         scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff'
     }).then(canvas => {
         const { jsPDF } = window.jspdf;
-        const containerWidth = (container.offsetWidth * 0.264583) - 20;
-        const containerHeight = container.offsetHeight * 0.264583;
-        
-        const pdf = new jsPDF('p', 'mm', [containerWidth, containerHeight]);
+
         const imgData = canvas.toDataURL('image/png');
-        
-        let imgWidth = containerWidth - 4 - 5.3;
+
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const maxPageHeight = pdf.internal.pageSize.getHeight();
+
+        const imgWidth = pageWidth - 20; // margins
         let imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-        if (imgHeight > containerHeight - 4) {
-            imgHeight = containerHeight - 4;
-            imgWidth = (canvas.width * imgHeight) / canvas.height;
+
+        // Limit to max page height - margin
+        if (imgHeight > maxPageHeight - 20) {
+            imgHeight = maxPageHeight - 20;
         }
-        
-        const xPos = (containerWidth - imgWidth) / 2 - 2.6 + 2.6; // Add 10px (2.6mm) left margin
-        const yPos = 10;
-        
-        pdf.addImage(imgData, 'PNG', xPos, yPos, imgWidth, imgHeight);
-        
-        const pdfBlob = pdf.output('blob');
-        const pdfUrl = URL.createObjectURL(pdfBlob);
-        window.open(pdfUrl, '_blank');
-        
+
+        const x = (pageWidth - imgWidth) / 2;
+        const y = 10;
+
+        pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+
+        const blob = pdf.output('blob');
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+
         buttons.style.display = 'block';
     });
 }
