@@ -2,11 +2,16 @@
 
 A smart, interactive web application that predicts a student's exam score based on multiple factors such as academic performance, attendance, study habits, sleep duration, and health conditions.
 
-Built using **Flask** for the backend, this project integrates powerful machine learning models like **LightGBM** and **XGBoost** to deliver accurate predictions. What sets it apart is the integration of **SHAP (SHapley Additive exPlanations)** — a model explainability tool that identifies the top factors influencing a student’s predicted score.
+Built using **Flask** for the backend, the application is served in a production-ready environment using **Gunicorn** this project integrates powerful machine learning models like **LightGBM** and **XGBoost** to deliver accurate predictions. What sets it apart is the integration of **SHAP (SHapley Additive exPlanations)** — a model explainability tool that identifies the top factors influencing a student’s predicted score.
 
 The app not only forecasts scores but also provides **personalized, data-driven suggestions** such as increasing study hours or improving attendance — helping students take actionable steps to boost their performance.
 
 Ideal for educational institutions, tutors, or students seeking data-backed insights into academic improvement.
+
+**🔗 Live Demo**
+
+[Click here to try the model on Hugging Face 🚀](https://huggingface.co/spaces/souviksenapati/Student_Exam_Score_Prediction)
+
 
 **📚 Table of Contents**
 
@@ -21,18 +26,18 @@ Ideal for educational institutions, tutors, or students seeking data-backed insi
 
 ---
 
-**💡 Key Technologies**
+**🛠️ Technologies Used**
 
-- Python  
+- Python
+- Gunicorn 
 - Flask  
 - Scikit-learn  
 - LightGBM  
 - XGBoost  
-- SHAP  
+- SHAP(SHapley Additive exPlanations) 
 - Pandas  
 - NumPy  
 - HTML/CSS/JS  
-- Matplotlib
 
 ---
  
