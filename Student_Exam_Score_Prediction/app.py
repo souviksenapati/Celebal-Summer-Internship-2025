@@ -7,6 +7,7 @@ import pandas as pd
 from flask import Flask, render_template, request
 import shap
 import os
+from sklearn.preprocessing import LabelEncoder
 
 # ============================
 # Flask App Initialization
@@ -18,12 +19,21 @@ app = Flask(__name__)
 # ============================
 model_dict = {
     "lgbm": pickle.load(open("model/student_score_lgbm_model.pkl", "rb")),
-    "xgb": pickle.load(open("model/student_score_xgb_model.pkl", "rb"))
+    "xgb": pickle.load(open("model/student_score_xgb_model.pkl", "rb")),
+    "linear": pickle.load(open("model/linear_regression_model.pkl", "rb"))
 }
+
+# Load and preprocess background data
+background_data = pd.read_csv("model/student_score_dataset_sample.csv")
+background_data["Gender"] = LabelEncoder().fit_transform(background_data["Gender"])  # Male=1, Female=0
+background_data["Health_Issues"] = background_data["Health_Issues"].map({"Yes": 1, "No": 0})
+
+
 
 explainer_dict = {
     "lgbm": shap.TreeExplainer(model_dict["lgbm"]),
-    "xgb": shap.Explainer(model_dict["xgb"])  # works with XGBoost's tree-based models
+    "xgb": shap.Explainer(model_dict["xgb"]),
+    "linear": shap.Explainer(model_dict["linear"], background_data)
 }
 
 # ============================

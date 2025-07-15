@@ -3,8 +3,7 @@ lightgbm
 xgboost==2.0.3
 numpy
 pandas
-scikit-learn
+scikit-learn==1.4.2
 shap
-matplotlib
 joblib
 pip
