@@ -2,11 +2,16 @@
 
 A smart, interactive web application that predicts a student's exam score based on multiple factors such as academic performance, attendance, study habits, sleep duration, and health conditions.
 
-Built using **Flask** for the backend, this project integrates powerful machine learning models like **LightGBM** and **XGBoost** to deliver accurate predictions. What sets it apart is the integration of **SHAP (SHapley Additive exPlanations)** — a model explainability tool that identifies the top factors influencing a student’s predicted score.
+Built using **Flask** for the backend, the application is served in a production-ready environment using **Gunicorn** this project integrates powerful machine learning models like **LightGBM** and **XGBoost** to deliver accurate predictions. What sets it apart is the integration of **SHAP (SHapley Additive exPlanations)** — a model explainability tool that identifies the top factors influencing a student’s predicted score.
 
 The app not only forecasts scores but also provides **personalized, data-driven suggestions** such as increasing study hours or improving attendance — helping students take actionable steps to boost their performance.
 
 Ideal for educational institutions, tutors, or students seeking data-backed insights into academic improvement.
+
+**🔗 Live Demo**
+
+[Click here to try the model on Hugging Face 🚀](https://huggingface.co/spaces/souviksenapati/Student_Exam_Score_Prediction)
+
 
 **📚 Table of Contents**
 
@@ -21,18 +26,21 @@ Ideal for educational institutions, tutors, or students seeking data-backed insi
 
 ---
 
-**💡 Key Technologies**
+**🛠️ Technologies Used**
 
-- Python  
+- Python
+- Gunicorn 
 - Flask  
 - Scikit-learn  
 - LightGBM  
 - XGBoost  
-- SHAP  
+- SHAP(SHapley Additive exPlanations)
+- jsPDF & html2canvas
 - Pandas  
-- NumPy  
+- NumPy
+- pickle
+- Git
 - HTML/CSS/JS  
-- Matplotlib
 
 ---
  
@@ -68,6 +76,7 @@ python app.py
    - View predicted score
    - Get SHAP-based key factor analysis
    - Receive personalized improvement suggestions
+   - Download personalized prediction report as PDF
 
 ---
 
@@ -75,11 +84,14 @@ python app.py
 
 ✅ Predicts student performance based on multiple factors  
 ✅ Two-model support: **LightGBM** and **XGBoost**  
-✅ Responsive 2-column form layout for desktop  
+✅ Models loaded using `pickle` (`.pkl`) files for fast inference   
 ✅ Real-time validation for total daily hours (24 hr cap)  
 ✅ SHAP explainability with top 2 negative factors  
 ✅ Personalized suggestions: "Increase study time by 2 hrs", etc.  
-✅ Lightweight Flask app suitable for CPU-based deployment 
+✅ Lightweight **Flask** backend served with **Gunicorn**, ideal for CPU-based deployment  
+✅ Option to download personalized prediction report as PDF
+
+
 
 ---
 
