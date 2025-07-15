@@ -8,7 +8,7 @@ The app not only forecasts scores but also provides **personalized, data-driven 
 
 Ideal for educational institutions, tutors, or students seeking data-backed insights into academic improvement.
 
-**🔗 Live Demo**
+# 🔗 Live Demo
 
 [Click here to try the model on Hugging Face 🚀](https://huggingface.co/spaces/souviksenapati/Student_Exam_Score_Prediction)
 
