@@ -76,6 +76,7 @@ python app.py
    - View predicted score
    - Get SHAP-based key factor analysis
    - Receive personalized improvement suggestions
+   - Download personalized prediction report as PDF
 
 ---
 
