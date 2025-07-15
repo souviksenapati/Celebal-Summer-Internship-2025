@@ -41,8 +41,8 @@ Ideal for educational institutions, tutors, or students seeking data-backed insi
 Clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/yourusername/student-score-predictor.git
-cd student-score-predictor
+https://github.com/souviksenapati/Celebal-Summer-Internship-2025.git
+cd Student_Exam_Score_Prediction
 python -m venv venv
 venv\Scripts\activate  # On Windows
 pip install -r requirements.txt
