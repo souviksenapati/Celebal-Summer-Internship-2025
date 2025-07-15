@@ -34,9 +34,12 @@ Ideal for educational institutions, tutors, or students seeking data-backed insi
 - Scikit-learn  
 - LightGBM  
 - XGBoost  
-- SHAP(SHapley Additive exPlanations) 
+- SHAP(SHapley Additive exPlanations)
+- jsPDF & html2canvas
 - Pandas  
-- NumPy  
+- NumPy
+- pickle
+- Git
 - HTML/CSS/JS  
 
 ---
@@ -80,11 +83,14 @@ python app.py
 
 ✅ Predicts student performance based on multiple factors  
 ✅ Two-model support: **LightGBM** and **XGBoost**  
-✅ Responsive 2-column form layout for desktop  
+✅ Models loaded using `pickle` (`.pkl`) files for fast inference   
 ✅ Real-time validation for total daily hours (24 hr cap)  
 ✅ SHAP explainability with top 2 negative factors  
 ✅ Personalized suggestions: "Increase study time by 2 hrs", etc.  
-✅ Lightweight Flask app suitable for CPU-based deployment 
+✅ Lightweight **Flask** backend served with **Gunicorn**, ideal for CPU-based deployment  
+✅ Option to download personalized prediction report as PDF
+
+
 
 ---
 
