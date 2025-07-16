@@ -12,7 +12,7 @@ Ideal for educational institutions, tutors, or students seeking data-backed insi
 
 # 🔗 Live Demo
 
-   [Click here to try the model on Hugging Face 🚀](https://huggingface.co/spaces/souviksenapati/Student_Exam_Score_Prediction)
+   [Click here to try the project on Hugging Face 🚀](https://huggingface.co/spaces/souviksenapati/Student_Exam_Score_Prediction)
 
 ---
 
