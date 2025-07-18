@@ -15,21 +15,20 @@ Ideal for educational institutions, tutors, or students seeking data-backed insi
    [Click here to try the project on Hugging Face 🚀](https://huggingface.co/spaces/souviksenapati/Student_Exam_Score_Prediction)
 
 ---
+## 📚 Dataset
 
+We use the **Student Score Prediction Dataset** from Kaggle:
 
-**📚 Table of Contents**
+🔗 **Dataset Link**  
+  [Click here 🚀](https://www.kaggle.com/datasets/souviksenapati1/student-score-dataset-2)
 
-- [Key Technologies](#key-technologies)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+- **Features**:  
+  `Gender`, `Hours_Studied`, `Previous_Exam_Score`, `Attendance`, `Sleep_Hours`, `Health_Issues`, `Extra_Curricular_Hours`, `Student_Score`
+
+- **Size**:  
+  10 Lakh rows of data
 
 ---
-
 **🛠️ Technologies Used**
 
 - Python
