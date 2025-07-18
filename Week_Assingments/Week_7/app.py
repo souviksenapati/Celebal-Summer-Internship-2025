@@ -15,23 +15,23 @@ st.set_page_config(
 # Load the model
 @st.cache_resource
 def load_model():
-    model_path = 'house_price_model.pkl'
-    if os.path.exists(model_path):
+    try:
+        model_path = 'house_price_model.pkl'
         with open(model_path, 'rb') as f:
             model = pickle.load(f)
         return model
-    else:
-        st.error("Model file not found. Please run train_model.py first.")
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
         return None
 
 # Load the dataset
 @st.cache_data
 def load_data():
-    data_path = 'house_data.csv'
-    if os.path.exists(data_path):
+    try:
+        data_path = 'house_data.csv'
         return pd.read_csv(data_path)
-    else:
-        st.error("Dataset file not found. Please run train_model.py first.")
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
         return None
 
 # Main function
@@ -49,8 +49,8 @@ def main():
     
     # Display model information
     st.subheader("Model Information")
-    st.write(f"Base Price (Intercept): Rs.{model.intercept_:.2f}")
-    st.write(f"Price per Square Foot: Rs.{model.coef_[0]:.2f}")
+    st.write(f"Base Price (Intercept): ₹{model.intercept_:.2f}")
+    st.write(f"Price per Square Foot: ₹{model.coef_[0]:.2f}")
     
     # Create tabs
     tab1, tab2 = st.tabs(["Prediction", "Data Visualization"])
@@ -74,13 +74,13 @@ def main():
             prediction = model.predict(input_data)[0]
             
             # Display prediction
-            st.success(f"Predicted House Price: Rs.{prediction:,.2f}")
+            st.success(f"Predicted House Price: ₹{prediction:,.2f}")
             
             # Show calculation
             st.write("#### Price Calculation:")
-            st.write(f"Base Price: Rs.{model.intercept_:,.2f}")
-            st.write(f"Size Factor: {house_size} sq ft × Rs.{model.coef_[0]:.2f}/sq ft = Rs.{house_size * model.coef_[0]:,.2f}")
-            st.write(f"Total: Rs.{model.intercept_ + house_size * model.coef_[0]:,.2f}")
+            st.write(f"Base Price: ₹{model.intercept_:,.2f}")
+            st.write(f"Size Factor: {house_size} sq ft × ₹{model.coef_[0]:.2f}/sq ft = ₹{house_size * model.coef_[0]:,.2f}")
+            st.write(f"Total: ₹{model.intercept_ + house_size * model.coef_[0]:,.2f}")
     
     with tab2:
         st.subheader("Data Visualization")
@@ -100,7 +100,7 @@ def main():
         
         ax.plot(line_x, line_y, color='red', linewidth=2)
         ax.set_xlabel('House Size (square feet)')
-        ax.set_ylabel('House Price (Rs.)')
+        ax.set_ylabel('House Price (₹)')
         ax.set_title('House Price vs Size with Regression Line')
         
         # Display the plot
