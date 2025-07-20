@@ -102,7 +102,7 @@ python app.py
 
 | Input Form | Prediction Result |
 |------------|-------------------|
-| ![Form](Student_Exam_Score_Prediction/screenshots/form.png) | ![Result](Student_Exam_Score_Prediction/screenshots/result.png) |
+| ![Form](screenshots/form.png) | ![Result](screenshots/result.png) |
 
 
 ---
