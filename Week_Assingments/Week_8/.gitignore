@@ -1,0 +1,41 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.env
+.streamlit/secrets.toml
+*.db
+chroma_db/
+
+
+# Secrets and environment
+.env
+.streamlit/secrets.toml
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Vector database
+chroma_db/
+*.db
+*.sqlite
+
+# Data
+*.csv
+*.json
+*.pkl
+
+# IDE
+.vscode/
+.idea/
