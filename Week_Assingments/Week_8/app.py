@@ -1,6 +1,12 @@
 import os
 import uuid
 import numpy as np
+
+# Set cache directories before importing transformers/sentence-transformers
+os.environ['TRANSFORMERS_CACHE'] = '/tmp/transformers_cache'
+os.environ['HF_HOME'] = '/tmp/huggingface_cache'
+os.environ['SENTENCE_TRANSFORMERS_HOME'] = '/tmp/sentence_transformers_cache'
+
 from flask import Flask, render_template, request, jsonify
 from groq import Groq
 from sentence_transformers import SentenceTransformer
@@ -25,15 +31,11 @@ class SimpleVectorStore:
         self.documents = []
         self.file_sources = []  # Track which file each chunk came from
     
-    def add_documents(self, docs, embeddings, filename):
-        if len(self.documents) == 0:
-            self.documents = docs
-            self.embeddings = np.array(embeddings)
-            self.file_sources = [filename] * len(docs)
-        else:
-            self.documents.extend(docs)
-            self.embeddings = np.vstack([self.embeddings, np.array(embeddings)])
-            self.file_sources.extend([filename] * len(docs))
+    def replace_documents(self, docs, embeddings, filename):
+        # Replace all documents with new ones
+        self.documents = docs
+        self.embeddings = np.array(embeddings)
+        self.file_sources = [filename] * len(docs)
     
     def similarity_search(self, query_embedding, k=3):
         if len(self.embeddings) == 0:
@@ -49,7 +51,7 @@ class RAGChatbot:
         self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
         self.vector_store = SimpleVectorStore()
         self.documents_loaded = False
-        self.uploaded_files = []  # Track uploaded files
+        self.current_file = None  # Track current active file
     
     def process_document(self, file_path, filename):
         ext = os.path.splitext(file_path)[1].lower()
@@ -66,11 +68,9 @@ class RAGChatbot:
         chunks = self.chunk_text(text)
         embeddings = self.embedding_model.encode(chunks)
         
-        self.vector_store.add_documents(chunks, embeddings, filename)
+        self.vector_store.replace_documents(chunks, embeddings, filename)
         self.documents_loaded = True
-        
-        if filename not in self.uploaded_files:
-            self.uploaded_files.append(filename)
+        self.current_file = filename
     
     def extract_pdf_text(self, pdf_path):
         with open(pdf_path, 'rb') as file:
@@ -143,7 +143,7 @@ def upload():
 
 @app.route('/files', methods=['GET'])
 def get_uploaded_files():
-    return jsonify({"files": chatbot.uploaded_files})
+    return jsonify({"current_file": chatbot.current_file})
 
 @app.route('/ask', methods=['POST'])
 def ask():

@@ -13,6 +13,7 @@
                 <div class="welcome-icon">🤖</div>
                 <h2>RAG Document Chatbot</h2>
                 <p>Drop documents anywhere or use the 📎 button to upload</p>
+                <small style="color: #65676b; font-size: 0.9rem;">Note: Each new document replaces the previous one</small>
                 <div class="uploaded-files" id="uploadedFiles"></div>
             </div>
         </div>
@@ -36,7 +37,7 @@
     </div>
 
     <script>
-        let uploadedCount = 0;
+        let currentFile = null;
         
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
@@ -90,9 +91,9 @@
             })
             .then(res => res.text())
             .then(data => {
-                uploadedCount++;
+                currentFile = file.name;
                 addMessage('system', `✅ ${file.name} processed successfully`);
-                addUploadedFile(file.name);
+                updateCurrentFile(file.name);
             })
             .catch(err => {
                 addMessage('error', `❌ Failed to process ${file.name}`);
@@ -100,10 +101,11 @@
             });
         }
         
-        function addUploadedFile(filename) {
+        function updateCurrentFile(filename) {
+            uploadedFiles.innerHTML = ''; // Clear previous files
             const fileTag = document.createElement('span');
             fileTag.className = 'file-tag';
-            fileTag.textContent = filename;
+            fileTag.textContent = `📄 ${filename} (Active)`;
             uploadedFiles.appendChild(fileTag);
         }
         
@@ -130,23 +132,20 @@
             chatContainer.appendChild(messageDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-
         function askQuestion() {
             const input = document.getElementById('questionInput');
             const question = input.value.trim();
             if (!question) return;
-            if (uploadedCount === 0) {
-                addMessage('error', 'Please upload at least one document first.');
+            if (!currentFile) {
+                addMessage('error', 'Please upload a document first.');
                 return;
             }
-
             addMessage('user', question);
             input.value = '';
             
             const sendBtn = document.getElementById('sendBtn');
             sendBtn.disabled = true;
             sendBtn.textContent = 'Thinking...';
-
             fetch('/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
